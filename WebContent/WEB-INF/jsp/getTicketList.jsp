@@ -1,27 +1,95 @@
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.Optional"%>
-<%@page import="java.util.List"%>
-<%@ page language="java" contentType="application/json; charset=UTF-8"
-pageEncoding="UTF-8"%>
+import java.beans.Statement;
+import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.Connection;
 
 
 
-<%
-Optional<List<String[]>>optList =
-Optional.ofNullable((List<String[]>)request.getAttribute("json"));
-List<String[]> list=new ArrayList<>();
-if(optList.isPresent()){
-list = optList.get();
+import javax.naming.InitialContext;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
+
+
+import java.util.ArrayList;
+/**
+* Servlet implementation class GetPointServlet
+*/
+@WebServlet("/getPoint")
+public class GetPointServlet extends HttpServlet {
+private static final long serialVersionUID = 1L;
+
+
+
+/**
+* @see HttpServlet#HttpServlet()
+*/
+public GetPointServlet() {
+super();
+// TODO Auto-generated constructor stub
 }
-%>
-[
-<% for (String[] s : list){
-String a = s[0] ;
-String b = s[1];
-String c = s[2];
-%>
 
-{"店舗": <%= a %> ,"ユーザー":<%= b %> , "ポイント":<%= c %> }
 
-<% } %>
-]
+
+/**
+* @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+* response)
+*/
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+throws ServletException, IOException {
+
+
+
+final String driverName = "com.mysql.jdbc.Driver";
+final String url = "jdbc:mysql://192.168.54.190:3306/jsonkadai05";
+final String id = "jsonkadai05";
+final String pass = "JsonKadai05";
+
+
+
+try {
+Class.forName(driverName);
+Connection connection = DriverManager.getConnection(url, id, pass);
+PreparedStatement st = connection.prepareStatement("select * from point_list ");
+ResultSet result = st.executeQuery();
+List<String[]> list = new ArrayList<>();
+
+while( result.next() == true) {
+String[] s = new String[3];
+
+
+
+s[0]=result.getString("TENPO_ID");
+s[1]=result.getString("USER_ID");
+s[2]=result.getString("POINT");
+
+
+
+list.add(s);
+}
+
+
+
+request.setAttribute("json",list);
+request.getRequestDispatcher("/WEB-INF/jsp/getPoint.jsp").forward(request,response);
+
+} catch (ClassNotFoundException e ) {
+e.printStackTrace();
+} catch (SQLException e ) {
+e.printStackTrace();
+}
+}
+}
+// RequestDispatcher rd =
+// request.getRequestDispatcher("/WEB-INF/jsp/getPoint.jsp");
+// rd.forward(request, response);

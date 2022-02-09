@@ -60,7 +60,7 @@ final String pass = "JsonKadai05";
 try {
 Class.forName(driverName);
 Connection connection = DriverManager.getConnection(url, id, pass);
-PreparedStatement st = connection.prepareStatement("select * from point ");
+PreparedStatement st = connection.prepareStatement("select * from point_list ");
 ResultSet result = st.executeQuery();
 List<String[]> list = new ArrayList<>();
 
@@ -69,11 +69,9 @@ String[] s = new String[3];
 
 
 
-s[0]=result.getString("dept_id");
-s[1]=result.getString("user_id");
-s[2]=result.getString("point");
-
-
+s[0]=result.getString("TENPO_ID");
+s[1]=result.getString("USER_ID");
+s[2]=result.getString("POINT");
 
 
 
