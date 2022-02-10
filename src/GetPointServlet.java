@@ -60,35 +60,27 @@ final String pass = "JsonKadai05";
 try {
 Class.forName(driverName);
 Connection connection = DriverManager.getConnection(url, id, pass);
-String TENPO_ID = request.getParameter("TENPO_ID");
-String USER_ID = request.getParameter("USER_ID");
-
-int POINT = 30;
-PreparedStatement st = connection.prepareStatement("INSERT IGNORE point_list set TENPO_ID =?,USER_ID=?,POINT = ? ");
-st.setString(1,TENPO_ID );
-st.setString(2, USER_ID);
-st.setInt(3, POINT);
-
-st.executeUpdate();
-
-PreparedStatement stmt = connection.prepareStatement("select POINT from point_list where TENPO_ID=? and USER_ID=?");
-stmt.setString(1, TENPO_ID);
-stmt.setString(2, USER_ID);
-
-
-
-ResultSet result = stmt.executeQuery();
-
+PreparedStatement st = connection.prepareStatement("select * from point_list ");
+ResultSet result = st.executeQuery();
 List<String[]> list = new ArrayList<>();
 
 while( result.next() == true) {
-	POINT = result.getInt("POINT");
-	
+String[] s = new String[3];
+
+
+
+s[0]=result.getString("TENPO_ID");
+s[1]=result.getString("USER_ID");
+s[2]=result.getString("POINT");
+
+
+
+list.add(s);
 }
-System.out.println(POINT);
 
 
-request.setAttribute("POINT",POINT);
+
+request.setAttribute("json",list);
 request.getRequestDispatcher("/WEB-INF/jsp/getPoint.jsp").forward(request,response);
 
 } catch (ClassNotFoundException e ) {
@@ -100,4 +92,3 @@ e.printStackTrace();
 }
 // RequestDispatcher rd =
 // request.getRequestDispatcher("/WEB-INF/jsp/getPoint.jsp");
-// rd.forward(request, response);
