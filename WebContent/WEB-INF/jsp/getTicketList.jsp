@@ -1,20 +1,28 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Optional"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="application/json; charset=UTF-8"
 pageEncoding="UTF-8"%>
-<%@ page import = "bean.Ticket,java.util.ArrayList,java.util.List" %>
-<% List<Ticket> list = (ArrayList<Ticket>)request.getAttribute("list");
-out.println("｛");
-for(Ticket ticket : list){
-out.print("{\"店舗ID\":");
-out.print(ticket.getTeId());
-out.print("{\"チケットID\":");
-out.print(ticket.getTiId());
-out.print(",\"OptName\":\"");
-out.print(ticket.getOptName());
-out.print("\"");
-out.print(",\"POINT\":");
-out.print(ticket.getPoint());
-out.println("},");
+
+
+
+<%
+Optional<List<String[]>>optList =
+Optional.ofNullable((List<String[]>)request.getAttribute("json"));
+List<String[]> list=new ArrayList<>();
+if(optList.isPresent()){
+list = optList.get();
 }
-out.print("｝");
 %>
 
+
+<% for (String[] s : list){
+String a = s[0] ;
+String b = s[1];
+String c = s[2];
+String d = s[3];
+%>
+
+{"店舗": <%= a %> ,"チケットID":<%= b %> , "チケット名":<%= c %> , "ポイント":<%= d %> }
+
+<% } %>
